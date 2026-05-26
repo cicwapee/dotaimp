@@ -2,6 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dota 2 Imposter</title>
 <style>
     /* Глобальні налаштування та анімований фон */
@@ -15,9 +16,10 @@
         justify-content: center;
         min-height: 100vh;
         margin: 0;
-        padding: 20px;
+        padding: 16px; /* Трохи менший паддінг для мобільних */
         overflow-x: hidden;
         position: relative;
+        box-sizing: border-box;
     }
 
     /* Фоновий ефект світіння */
@@ -34,17 +36,19 @@
     }
 
     h1 {
-        font-size: 38px;
+        font-size: 32px; /* Зменшено для мобільних екранів */
         font-weight: 900;
         text-transform: uppercase;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
         background: linear-gradient(90deg, #ffcc00, #ff4d4d);
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 25px;
+        margin-top: 10px;
+        margin-bottom: 20px;
         text-shadow: 0 0 30px rgba(255, 204, 0, 0.2);
         z-index: 1;
+        text-align: center;
     }
 
     /* Скляна картка (Glassmorphism) */
@@ -53,10 +57,10 @@
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 35px;
+        padding: 24px; /* Компактніші відступи */
         border-radius: 16px;
         width: 100%;
-        max-width: 480px;
+        max-width: 440px;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         margin-bottom: 20px;
         box-sizing: border-box;
@@ -66,9 +70,9 @@
 
     label {
         display: block;
-        margin-top: 18px;
+        margin-top: 16px;
         font-weight: 700;
-        font-size: 13px;
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: #9ca3af;
@@ -87,6 +91,7 @@
         box-sizing: border-box;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+        font-family: inherit;
     }
     input:focus, select:focus {
         border-color: #ffcc00;
@@ -103,21 +108,23 @@
         border: none;
         border-radius: 10px;
         font-weight: 800;
-        font-size: 16px;
+        font-size: 15px;
         text-transform: uppercase;
         letter-spacing: 1px;
         cursor: pointer;
         color: #030712;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 8px 20px rgba(255, 170, 0, 0.3);
+        font-family: inherit;
+        -webkit-tap-highlight-color: transparent; /* Прибирає синій спалах при тапі на айфонах */
     }
     button:hover {
         background: linear-gradient(135deg, #ffe066 0%, #ffcc00 100%);
-        transform: translateY(-3px);
+        transform: translateY(-2px);
         box-shadow: 0 12px 25px rgba(255, 204, 0, 0.5);
     }
     button:active {
-        transform: translateY(-1px);
+        transform: translateY(0);
     }
 
     /* Екран відображення ролі */
@@ -126,23 +133,24 @@
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        padding: 45px 35px;
+        padding: 35px 24px; /* Адаптовано під вузькі екрани */
         border-radius: 20px;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 10px;
         width: 100%;
-        max-width: 480px;
+        max-width: 440px;
         box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
         box-sizing: border-box;
         z-index: 1;
     }
     
     .role {
-        font-size: 38px;
+        font-size: 32px; /* Злегка зменшено для довгих назв */
         font-weight: 900;
-        margin: 30px 0;
-        letter-spacing: 2px;
+        margin: 25px 0;
+        letter-spacing: 1px;
         text-transform: uppercase;
+        word-wrap: break-word; /* Щоб довгі слова не вилазили за край */
     }
 
     /* Стиль та тремтіння Імпостера */
@@ -176,26 +184,34 @@
         text-shadow: 0 0 10px rgba(255,77,77,0.3);
     }
 
+    /* Медіа-запит для зовсім маленьких екранів (наприклад, iPhone SE) */
+    @media (max-width: 375px) {
+        h1 { font-size: 28px; }
+        .role { font-size: 26px; }
+        .card, .role-box { padding: 20px 16px; }
+        button { padding: 14px; font-size: 14px; }
+    }
+
     /* Ключові кадри ефектів */
     @keyframes superReadyIn {
-        from { opacity: 0; transform: scale(0.92) translateY(20px); }
+        from { opacity: 0; transform: scale(0.92) translateY(15px); }
         to { opacity: 1; transform: scale(1) translateY(0); }
     }
     @keyframes cyberPulse {
         0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.6); }
-        70% { box-shadow: 0 0 0 15px rgba(255, 170, 0, 0); }
+        70% { box-shadow: 0 0 0 12px rgba(255, 170, 0, 0); }
         100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
     }
     @keyframes neonFloat {
         0%, 100% { transform: translateY(0) scale(1); }
-        50% { transform: translateY(-8px) scale(1.02); }
+        50% { transform: translateY(-6px) scale(1.01); }
     }
     @keyframes criticalShake {
         0% { transform: translate(0, 0) rotate(0deg); }
-        25% { transform: translate(-1.5px, 1px) rotate(-0.5deg); }
-        50% { transform: translate(1px, -1.5px) rotate(0.5deg); }
-        75% { transform: translate(-1px, -1px) rotate(-0.5deg); }
-        100% { transform: translate(1.5px, 1px) rotate(0deg); }
+        25% { transform: translate(-1px, 0.5px) rotate(-0.5deg); }
+        50% { transform: translate(0.5px, -1px) rotate(0.5deg); }
+        75% { transform: translate(-0.5px, -0.5px) rotate(-0.5deg); }
+        100% { transform: translate(1px, 0.5px) rotate(0deg); }
     }
 </style>
 </head>
@@ -203,7 +219,6 @@
 
 <h1>Dota 2 Imposter</h1>
 
-<!-- Головне меню -->
 <div class="card fade-in" id="setup">
     <label>Виберіть тему гри:</label>
     <select id="theme">
@@ -217,10 +232,10 @@
     </select>
 
     <label>Кількість гравців:</label>
-    <input type="number" id="players" min="2" value="5" onchange="validateInputs()">
+    <input type="number" id="players" inputmode="numeric" pattern="[0-9]*" min="2" value="5" onchange="validateInputs()">
 
     <label>Кількість імпостерів:</label>
-    <input type="number" id="imposters" min="1" value="1" onchange="validateInputs()">
+    <input type="number" id="imposters" inputmode="numeric" pattern="[0-9]*" min="1" value="1" onchange="validateInputs()">
     <div id="error-msg" class="error">⚠️ Кількість імпостерів повинна бути меншою за кількість гравців!</div>
 
     <button id="start-btn" onclick="startGame()">Почати катку</button>
@@ -230,7 +245,6 @@
 
 <script>
 const themesData = {
-    // База даних повністю збережена
     heroes: [
         "Abaddon", "Alchemist", "Ancient Apparition", "Anti-Mage", "Arc Warden", "Axe", "Bane", "Batrider",
         "Beastmaster", "Bloodseeker", "Bounty Hunter", "Brewmaster", "Bristleback", "Broodmother", "Centaur Warrunner",
@@ -270,7 +284,7 @@ const themesData = {
         "Статуя Свободи (США)", "Гранд-Каньйон (США)", "Гора Рашмор (США)", "Сіднейська opera (Австралія)", 
         "Бурдж Халіфа (ОАЕ)", "Мечеть Шейха Заїда (ОАЕ)", "Храм Анкор-Ват (Камбоджа)", "Пагода Шведагон", 
         "Свята Софія (Туреччина)", "Памуккале (Туреччина)", "Храм Боробудур (Індонезія)", "Острів Пасхи", 
-        "Замок Нойшванштайн (Німеччина)", "Бранденбурзькі ворота", "Версальський палац", "Фудзіяма (Японія)", 
+        "Замок Нойшванштайн (Німеччина)", "Бранденбурзькі ворота", "Версальський палац", "Фудзіяма (Япония)", 
         "Золоті Ворота (Сан-Франциско)", "Маунт-Еверест", "Ніагарський водоспад", "Мертве море"
     ],
     western_artists: [
@@ -365,9 +379,9 @@ function showPlayerScreen() {
     const game = document.getElementById("game");
     game.innerHTML = `
         <div class="role-box fade-in">
-            <h2 style="color: #9ca3af; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Конфіденційно</h2>
-            <h1 style="font-size: 42px; margin: 15px 0 35px 0; color: #fff;">Гравець ${currentPlayer}</h1>
-            <p style="color: #6b7280; font-size: 14px; margin-bottom: 25px;">Прибери екран від очей інших тімейтів!</p>
+            <h2 style="color: #9ca3af; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">Конфіденційно</h2>
+            <h1 style="font-size: 36px; margin: 15px 0 30px 0; color: #fff;">Гравець ${currentPlayer}</h1>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 25px; padding: 0 10px;">Прибери екран від очей інших тімейтів!</p>
             <button class="pulse-btn" onclick="revealRole()">Відкрити роль</button>
         </div>
     `;
@@ -380,17 +394,17 @@ function revealRole() {
     let roleHTML = "";
     if (role === "Imposter") {
         roleHTML = `
-            <div style="font-size: 12px; color: #ff4d4d; font-weight: 800; letter-spacing: 3px;">ТВОЯ СЕКРЕТНА РОЛЬ</div>
+            <div style="font-size: 12px; color: #ff4d4d; font-weight: 800; letter-spacing: 2px;">ТВОЯ СЕКРЕТНА РОЛЬ</div>
             <div class="role imposter">IMPOSTER 🕵️‍♂️</div>
-            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5;">
+            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5; padding: 0 5px;">
                 Ти без поняття, яке слово загадано. Твій єдиний шанс — уважно слухати чужі асоціації, жорстко блефувати та копіювати чужі думки!
             </p>
         `;
     } else {
         roleHTML = `
-            <div style="font-size: 12px; color: #00d2ff; font-weight: 800; letter-spacing: 3px;">СЕКРЕТНЕ СЛОВО</div>
+            <div style="font-size: 12px; color: #00d2ff; font-weight: 800; letter-spacing: 2px;">СЕКРЕТНЕ СЛОВО</div>
             <div class="role hero">${role}</div>
-            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5;">
+            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5; padding: 0 5px;">
                 Ти — мирний житель. Говори точкові, завуальовані асоціації, щоб твої зрозуміли, але Імпостер не зміг одразу здогадатися.
             </p>
         `;
@@ -400,13 +414,13 @@ function revealRole() {
     if (currentPlayer < totalPlayers) {
         nextButton = `<button onclick="nextPlayer()">Наступний гравець →</button>`;
     } else {
-        nextButton = `<button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);" onclick="newGame()">Катка готова! Почати обговорення</button>`;
+        nextButton = `<button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);" onclick="newGame()">Катка готова! Обговорення</button>`;
     }
 
     game.innerHTML = `
         <div class="role-box fade-in">
-            <h2 style="color: #9ca3af; font-size: 15px; text-transform: uppercase;">Гравець ${currentPlayer}</h2>
-            <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 30px;">
+            <h2 style="color: #9ca3af; font-size: 14px; text-transform: uppercase;">Гравець ${currentPlayer}</h2>
+            <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 25px;">
             ${roleHTML}
             ${nextButton}
         </div>
