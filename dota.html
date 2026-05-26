@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Dota 2 Imposter</title>
+<style>
+    /* Глобальні налаштування та анімований фон */
+    body {
+        background: linear-gradient(135deg, #060913 0%, #0b1121 50%, #150a1d 100%);
+        color: #f3f4f6;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+        overflow-x: hidden;
+        position: relative;
+    }
+
+    /* Фоновий ефект світіння */
+    body::before {
+        content: '';
+        position: fixed;
+        top: -10%;
+        left: -10%;
+        width: 120%;
+        height: 120%;
+        background: radial-gradient(circle, rgba(255, 204, 0, 0.05) 0%, rgba(255, 77, 77, 0.03) 50%, transparent 100%);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    h1 {
+        font-size: 38px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        background: linear-gradient(90deg, #ffcc00, #ff4d4d);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 25px;
+        text-shadow: 0 0 30px rgba(255, 204, 0, 0.2);
+        z-index: 1;
+    }
+
+    /* Скляна картка (Glassmorphism) */
+    .card {
+        background: rgba(21, 27, 45, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 35px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+
+    label {
+        display: block;
+        margin-top: 18px;
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #9ca3af;
+    }
+
+    /* Кастомні інпути з підсвіткою */
+    input, select {
+        width: 100%;
+        padding: 14px;
+        margin-top: 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(10, 14, 26, 0.8);
+        color: #fff;
+        font-size: 15px;
+        box-sizing: border-box;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    }
+    input:focus, select:focus {
+        border-color: #ffcc00;
+        box-shadow: 0 0 15px rgba(255, 204, 0, 0.25), inset 0 2px 4px rgba(0,0,0,0.4);
+        outline: none;
+    }
+
+    /* Кнопки з градієнтом */
+    button {
+        width: 100%;
+        padding: 16px;
+        margin-top: 25px;
+        background: linear-gradient(135deg, #ffcc00 0%, #ffaa00 100%);
+        border: none;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 16px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        color: #030712;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 20px rgba(255, 170, 0, 0.3);
+    }
+    button:hover {
+        background: linear-gradient(135deg, #ffe066 0%, #ffcc00 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(255, 204, 0, 0.5);
+    }
+    button:active {
+        transform: translateY(-1px);
+    }
+
+    /* Екран відображення ролі */
+    .role-box {
+        background: rgba(26, 32, 56, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 45px 35px;
+        border-radius: 20px;
+        text-align: center;
+        margin-top: 20px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+        box-sizing: border-box;
+        z-index: 1;
+    }
+    
+    .role {
+        font-size: 38px;
+        font-weight: 900;
+        margin: 30px 0;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Стиль та тремтіння Імпостера */
+    .imposter {
+        color: #ff4d4d;
+        text-shadow: 0 0 25px rgba(255, 77, 77, 0.9), 0 0 50px rgba(255, 77, 77, 0.4);
+        animation: criticalShake 0.3s infinite;
+    }
+
+    /* Стиль та левітація Мирного */
+    .hero {
+        color: #00d2ff;
+        text-shadow: 0 0 25px rgba(0, 210, 255, 0.8), 0 0 45px rgba(0, 210, 255, 0.3);
+        animation: neonFloat 2.5s ease-in-out infinite;
+    }
+
+    /* Анімації */
+    .fade-in {
+        animation: superReadyIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    .pulse-btn {
+        animation: cyberPulse 2s infinite;
+    }
+
+    .error {
+        color: #ff4d4d;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 10px;
+        display: none;
+        text-shadow: 0 0 10px rgba(255,77,77,0.3);
+    }
+
+    /* Ключові кадри ефектів */
+    @keyframes superReadyIn {
+        from { opacity: 0; transform: scale(0.92) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes cyberPulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0.6); }
+        70% { box-shadow: 0 0 0 15px rgba(255, 170, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 170, 0, 0); }
+    }
+    @keyframes neonFloat {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-8px) scale(1.02); }
+    }
+    @keyframes criticalShake {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-1.5px, 1px) rotate(-0.5deg); }
+        50% { transform: translate(1px, -1.5px) rotate(0.5deg); }
+        75% { transform: translate(-1px, -1px) rotate(-0.5deg); }
+        100% { transform: translate(1.5px, 1px) rotate(0deg); }
+    }
+</style>
+</head>
+<body>
+
+<h1>Dota 2 Imposter</h1>
+
+<!-- Головне меню -->
+<div class="card fade-in" id="setup">
+    <label>Виберіть тему гри:</label>
+    <select id="theme">
+        <option value="heroes">Всі Герої Dota 2 (126)</option>
+        <option value="items">Всі Предмети Dota 2 (Крамниця)</option>
+        <option value="wonders">Світові Чудеса та Пам'ятки</option>
+        <option value="western_artists">Артисти Заходу (Світові зірки)</option>
+        <option value="cis_artists">Артисти СНД (Поп, Реп, Рок)</option>
+        <option value="clothing_brands">Відомі Бренди Одягу (Люкс/Стрітвір)</option>
+        <option value="cis_streamers">Стрімери СНД (Twitch / YouTube)</option>
+    </select>
+
+    <label>Кількість гравців:</label>
+    <input type="number" id="players" min="2" value="5" onchange="validateInputs()">
+
+    <label>Кількість імпостерів:</label>
+    <input type="number" id="imposters" min="1" value="1" onchange="validateInputs()">
+    <div id="error-msg" class="error">⚠️ Кількість імпостерів повинна бути меншою за кількість гравців!</div>
+
+    <button id="start-btn" onclick="startGame()">Почати катку</button>
+</div>
+
+<div id="game"></div>
+
+<script>
+const themesData = {
+    // База даних повністю збережена
+    heroes: [
+        "Abaddon", "Alchemist", "Ancient Apparition", "Anti-Mage", "Arc Warden", "Axe", "Bane", "Batrider",
+        "Beastmaster", "Bloodseeker", "Bounty Hunter", "Brewmaster", "Bristleback", "Broodmother", "Centaur Warrunner",
+        "Chaos Knight", "Chen", "Clinkz", "Clockwerk", "Crystal Maiden", "Dark Seer", "Dark Willow", "Dawnbreaker",
+        "Dazzle", "Death Prophet", "Disruptor", "Doom", "Dragon Knight", "Drow Ranger", "Earth Spirit", "Earthshaker",
+        "Elder Titan", "Ember Spirit", "Enchantress", "Enigma", "Faceless Void", "Grimstroke", "Gyrocopter", "Hoodwink",
+        "Huskar", "Invoker", "Io", "Jakiro", "Juggernaut", "Keeper of the Light", "Kunkka", "Legion Commander",
+        "Largo","Leshrac", "Lich", "Lifestealer", "Lina", "Lion", "Lone Druid", "Luna", "Lycan", "Magnus", "Marci", "Mars",
+        "Medusa", "Meepo", "Mirana", "Monkey King", "Morphling", "Muerta", "Naga Siren", "Nature's Prophet", "Necrophos",
+        "Night Stalker", "Nyx Assassin", "Ogre Magi", "Omniknight", "Oracle", "Outworld Destroyer", "Pangolier",
+        "Phantom Assassin", "Phantom Lancer", "Phoenix", "Primal Beast", "Puck", "Pudge", "Pugna", "Queen of Pain",
+        "Razor", "Riki", "RingMaster", "Rubick", "Sand King", "Shadow Demon", "Shadow Fiend", "Shadow Shaman", "Silencer", "Skywrath Mage",
+        "Slardar", "Slark", "Snapfire", "Sniper", "Spectre", "Spirit Breaker", "Storm Spirit", "Sven", "Techies",
+        "Templar Assassin", "Terrorblade", "Tidehunter", "Timbersaw", "Tinker", "Tiny", "Treant Protector", "Troll Warlord",
+        "Tusk", "Underlord", "Undying", "Ursa", "Vengeful Spirit", "Venomancer", "Viper", "Visage", "Void Spirit",
+        "Warlock", "Weaver", "Windranger", "Winter Wyvern", "Witch Doctor", "Wraith King", "Zeus", "Kez"
+    ],
+    items: [
+        "Blink Dagger", "Overwhelming Blink", "Swift Blink", "Arcane Blink", "Aegis of the Immortal", "Cheese",
+        "Refresher Shard", "Black King Bar (BKB)", "Divine Rapier", "Monkey King Bar (MKB)", "Daedalus", "Butterfly",
+        "Heart of Tarrasque", "Scythe of Vyse (Hex)", "Assault Cuirass", "Satanic", "Bloodthorn", "Refresher Orb",
+        "Manta Style", "Linken's Sphere", "Desolator", "Battle Fury", "Radiance", "Shiva's Guard", "Octarine Core",
+        "Eye of Skadi", "Abyssal Blade", "Aghanim's Scepter", "Aghanim's Shard", "Dagon 5", "Ethereal Blade",
+        "Orchid Malevolence", "Nullifier", "Silver Edge", "Shadow Blade", "Gleipnir", "Maelstrom", "Mjollnir",
+        "Hurricane Pike", "Force Staff", "Dragon Lance", "Eul's Scepter of Divinity", "Wind Waker", "Lotus Orb",
+        "Crimson Guard", "Pipe of Insight", "Guardian Greaves", "Boots of Bearing", "Power Treads", "Phase Boots",
+        "Arcane Boots", "Tranquil Boots", "Boots of Travel", "Kaya and Sange", "Yasha and Kaya", "Sange and Yasha",
+        "Heaven's Halberd", "Vanguard", "Blade Mail", "Hand of Midas", "Mask of Madness", "Diffusal Blade", "Helm of the Overlord"
+    ],
+    wonders: [
+        "Піраміда Хеопса (Єгипет)", "Висячі сади Семіраміди", "Статуя Зевса в Олімпії", "Храм Артеміди в Ефесі",
+        "Мавзолей у Галікарнасі", "Колос Родоський", "Александрійський маяк", "Велика китайська стіна", 
+        "Петра (Йорданія)", "Колізей (Італія)", "Чичен-Іца (Мексика)", "Мачу-Пікчу (Перу)", 
+        "Тадж-Махал (Індія)", "Статуя Христа-Спасителя (Бразилія)", "Ейфелева вежа (Франція)", 
+        "Лувр (Франція)", "Стоунхендж (Англія)", "Біг-Бен (Англія)", "Тауерський міст (Лондон)", 
+        "Акрополь в Афінах (Греція)", "Нотр-Дам де Парі", "Пізанська вежа (Італія)", 
+        "Статуя Свободи (США)", "Гранд-Каньйон (США)", "Гора Рашмор (США)", "Сіднейська opera (Австралія)", 
+        "Бурдж Халіфа (ОАЕ)", "Мечеть Шейха Заїда (ОАЕ)", "Храм Анкор-Ват (Камбоджа)", "Пагода Шведагон", 
+        "Свята Софія (Туреччина)", "Памуккале (Туреччина)", "Храм Боробудур (Індонезія)", "Острів Пасхи", 
+        "Замок Нойшванштайн (Німеччина)", "Бранденбурзькі ворота", "Версальський палац", "Фудзіяма (Японія)", 
+        "Золоті Ворота (Сан-Франциско)", "Маунт-Еверест", "Ніагарський водоспад", "Мертве море"
+    ],
+    western_artists: [
+        "The Weeknd", "Eminem", "Drake", "Travis Scott", "Kanye West", "Billie Eilish", "Taylor Swift", 
+        "Justin Bieber", "Post Malone", "Rihanna", "Beyoncé", "Bruno Mars", "Ed Sheeran", "Ariana Grande", 
+        "Dua Lipa", "Kendrick Lamar", "A$AP Rocky", "Lil Nas X", "Playboi Carti", "XXXTentacion", "Juice WRLD", 
+        "21 Savage", "Future", "Harry Styles", "Lady Gaga", "Michael Jackson", "Freddie Mercury", 
+        "Kurt Cobain", "Linkin Park", "Coldplay", "Imagine Dragons", "The Neighbourhood", "Lana Del Rey", 
+        "Doja Cat", "Cardi B", "Nicki Minaj", "David Guetta", "Avicii", "Skrillex", "Central Cee", "Tyler, the Creator"
+    ],
+    cis_artists: [
+        "Скриптонит", "Miyagi & Эндшпиль", "Macan", "Oxxxymiron", "Pharaoh", "LSP (ЛСП)", "OG Buda",
+        "Kizaru", "Big Baby Tape", "Markul", "Obladaet", "Saluki", "Баста", "Моргенштерн", "Егор Крид", 
+        "Jony", "HammAli & Navai", "Ramil'", "Макс Корж", "Noize MC", "Валентин Стрикало", 
+        "Пошлая Молли", "Нервы", "Земфира", "Кино (Виктор Цой)", "Король и Шут", "Би-2", "Сплин", 
+        "Лобода", "MONATIK", "Океан Ельзи", "Бумбокс", "Kalush", "Артем Пивоваров", "Dorofeeva","Платина","Плохой Парень","Слава КПСС"
+    ],
+    clothing_brands: [
+        "Nike", "Adidas", "Puma", "Reebok", "New Balance", "Under Armour", "Asics", "Jordan",
+        "Gucci", "Louis Vuitton", "Prada", "Balenciaga", "Chanel", "Dior", "Versace", "Burberry",
+        "Hermès", "Dolce & Gabbana", "Armani", "Calvin Klein", "Tommy Hilfiger", "Ralph Lauren",
+        "Zara", "H&M", "Bershka", "Pull&Bear", "Stradivarius", "Mango", "ASOS", "Uniqlo",
+        "Stone Island", "Supreme", "Off-White", "Stussy", "Carhartt WIP", "The North Face", "Patagonia",
+        "Moncler", "Diesel", "Levi's", "Wrangler", "Lacoste", "Fred Perry", "Palm Angels", "Vetements",
+        "Rick Owens", "BAPE", "Fear of God", "Chrome Hearts", "Crocs", "Vans", "Converse"
+    ],
+    cis_streamers: [
+        "Evelone192", "Buster (Бустер)", "Zubarefff (Зубарев)", "Stray228", "Nix (Никс)", "NS (Ярослав Кузнецов)",
+        "SilverName", "Arthas (Папич / Величайший)", "JesusAVGN (Хесус)", "Bratishkin (Братишкин)",
+        "Deepins", "Platina (Пчелкин)", "Recrent", "S1mple", "Shoke", "Dmitry Lixxx", "Koreshzy",
+        "Paradeevich", "Framedamer", "Kuplinov (Куплинов)", "Mellstroy", "shadowkekw", "Rostislav_999 (Ростик)",
+        "Alohadance", "Iceberg", "Cooman", "Yatoro", "Dendi", "Gorgc", "VooDooSh", "Cake", "Welovegames",
+        "SNAILKICK", "Егор Крид (стримы)", "Whupi", "Aunkere", "buster", "cheatbanned", "Dread"
+    ]
+};
+
+let roles = [];
+let currentPlayer = 1;
+let totalPlayers = 0;
+
+function validateInputs() {
+    const p = parseInt(document.getElementById("players").value) || 0;
+    const i = parseInt(document.getElementById("imposters").value) || 0;
+    const errorMsg = document.getElementById("error-msg");
+    const startBtn = document.getElementById("start-btn");
+
+    if (i >= p || p < 2 || i < 1) {
+        errorMsg.style.display = "block";
+        startBtn.disabled = true;
+        startBtn.style.opacity = "0.4";
+        return false;
+    } else {
+        errorMsg.style.display = "none";
+        startBtn.disabled = false;
+        startBtn.style.opacity = "1";
+        return true;
+    }
+}
+
+function startGame() {
+    if (!validateInputs()) return;
+
+    totalPlayers = parseInt(document.getElementById("players").value);
+    const totalImposters = parseInt(document.getElementById("imposters").value);
+    const selectedTheme = document.getElementById("theme").value;
+    
+    roles = [];
+
+    for (let i = 0; i < totalImposters; i++) {
+        roles.push("Imposter");
+    }
+
+    const currentPool = themesData[selectedTheme];
+    const secretWord = currentPool[Math.floor(Math.random() * currentPool.length)];
+
+    const peacefulPlayers = totalPlayers - totalImposters;
+    for (let i = 0; i < peacefulPlayers; i++) {
+        roles.push(secretWord);
+    }
+
+    for (let i = roles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [roles[i], roles[j]] = [roles[j], roles[i]];
+    }
+
+    currentPlayer = 1;
+    document.getElementById("setup").style.display = "none";
+    showPlayerScreen();
+}
+
+function showPlayerScreen() {
+    const game = document.getElementById("game");
+    game.innerHTML = `
+        <div class="role-box fade-in">
+            <h2 style="color: #9ca3af; font-size: 14px; text-transform: uppercase; letter-spacing: 2px;">Конфіденційно</h2>
+            <h1 style="font-size: 42px; margin: 15px 0 35px 0; color: #fff;">Гравець ${currentPlayer}</h1>
+            <p style="color: #6b7280; font-size: 14px; margin-bottom: 25px;">Прибери екран від очей інших тімейтів!</p>
+            <button class="pulse-btn" onclick="revealRole()">Відкрити роль</button>
+        </div>
+    `;
+}
+
+function revealRole() {
+    const role = roles[currentPlayer - 1];
+    const game = document.getElementById("game");
+
+    let roleHTML = "";
+    if (role === "Imposter") {
+        roleHTML = `
+            <div style="font-size: 12px; color: #ff4d4d; font-weight: 800; letter-spacing: 3px;">ТВОЯ СЕКРЕТНА РОЛЬ</div>
+            <div class="role imposter">IMPOSTER 🕵️‍♂️</div>
+            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5;">
+                Ти без поняття, яке слово загадано. Твій єдиний шанс — уважно слухати чужі асоціації, жорстко блефувати та копіювати чужі думки!
+            </p>
+        `;
+    } else {
+        roleHTML = `
+            <div style="font-size: 12px; color: #00d2ff; font-weight: 800; letter-spacing: 3px;">СЕКРЕТНЕ СЛОВО</div>
+            <div class="role hero">${role}</div>
+            <p style="color: #9ca3af; max-width: 365px; margin: 0 auto 25px auto; font-size: 14px; line-height: 1.5;">
+                Ти — мирний житель. Говори точкові, завуальовані асоціації, щоб твої зрозуміли, але Імпостер не зміг одразу здогадатися.
+            </p>
+        `;
+    }
+
+    let nextButton = "";
+    if (currentPlayer < totalPlayers) {
+        nextButton = `<button onclick="nextPlayer()">Наступний гравець →</button>`;
+    } else {
+        nextButton = `<button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);" onclick="newGame()">Катка готова! Почати обговорення</button>`;
+    }
+
+    game.innerHTML = `
+        <div class="role-box fade-in">
+            <h2 style="color: #9ca3af; font-size: 15px; text-transform: uppercase;">Гравець ${currentPlayer}</h2>
+            <hr style="border: 0; height: 1px; background: rgba(255,255,255,0.08); margin-bottom: 30px;">
+            ${roleHTML}
+            ${nextButton}
+        </div>
+    `;
+}
+
+function nextPlayer() {
+    currentPlayer++;
+    showPlayerScreen();
+}
+
+function newGame() {
+    document.getElementById("setup").style.display = "block";
+    document.getElementById("game").innerHTML = "";
+    validateInputs();
+}
+</script>
+
+</body>
+</html>
